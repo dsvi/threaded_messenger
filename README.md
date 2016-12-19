@@ -26,8 +26,6 @@ Imagine you'd like to execute a group of messages, probably in a thread pool, an
     //...
     g.wait(); // <- blocks till all the messages in the group either done or failed
     
- 
-
 For more advanced usage see [tests.](test.c++)
 
 ### License ###
