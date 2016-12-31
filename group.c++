@@ -20,11 +20,18 @@ Group::Group() : pending_tasks_{ make_shared<Blocker>() }
 
 std::function<void()> Group::add(std::function<void()> &&f)
 {
-	pending_tasks_->can_go = false;
-	return [fun = move(f), s = pending_tasks_]{
+	decltype(pending_tasks_) s;
+	{
+		unique_lock<mutex> lk(pending_tasks_->mtx);
+		s = pending_tasks_;
+		s->can_go = false;
+	}
+	return [fun = move(f), s]{
 		At_exit([&]{
+			unique_lock<mutex> lk(s->mtx);
 			if (s.use_count() == 2){
 				s->can_go = true;
+				lk.unlock();
 				s->cv.notify_all();
 			}
 		});
@@ -34,9 +41,9 @@ std::function<void()> Group::add(std::function<void()> &&f)
 
 void Group::wait()
 {
-	mutex cvm;
-	unique_lock<mutex> lk(cvm);
-	pending_tasks_->cv.wait(lk, [&]{return pending_tasks_->can_go;});
+	unique_lock<mutex> lk(pending_tasks_->mtx);
+	while(!pending_tasks_->can_go)
+		pending_tasks_->cv.wait(lk);
 }
 
 }

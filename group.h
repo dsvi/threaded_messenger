@@ -30,8 +30,9 @@ public:
 	void wait();
 private:
 	struct Blocker{
+		std::mutex mtx;
 		std::condition_variable cv;
-		bool can_go;
+		bool can_go = true;
 	};
 	std::shared_ptr<Blocker> pending_tasks_;
 };

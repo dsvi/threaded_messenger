@@ -26,7 +26,26 @@ void Message_queue::add(Msg_func &&f, std::initializer_list<Life_watcher> grds)
 {
 	{
 		unique_lock<mutex> lock(queue_mutex_);
-		msgs_.emplace(move(f), grds);
+		msgs_.emplace_back(move(f), grds);
+	}
+	wake_up_.notify_one();
+}
+
+void Message_queue::add_front(Msg_func &&msg)
+{
+	add_front(move(msg), initializer_list<Life_watcher>());
+}
+
+void Message_queue::add_front(Msg_func &&msg, Life_watcher lw)
+{
+	add_front(move(msg), {lw});
+}
+
+void Message_queue::add_front(Msg_func &&msg, std::initializer_list<Life_watcher> grds)
+{
+	{
+		unique_lock<mutex> lock(queue_mutex_);
+		msgs_.emplace_front(move(msg), grds);
 	}
 	wake_up_.notify_one();
 }
@@ -39,7 +58,7 @@ void Message_queue::run_one() noexcept
 			wake_up_.wait(lock);
 
 		Message msg = move(msgs_.front());
-		msgs_.pop();
+		msgs_.pop_front();
 		lock.unlock();
 		for (auto g: msg.watch)
 			if (g.expired())
