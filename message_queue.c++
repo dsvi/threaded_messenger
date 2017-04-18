@@ -71,6 +71,14 @@ void Message_queue::run_one() noexcept
 	}
 }
 
+bool Message_queue::empty() noexcept
+{
+	std::unique_lock<std::mutex> lock(queue_mutex_);
+	if (msgs_.empty())
+		return true;
+	return false;
+}
+
 void Message_queue::run() noexcept
 {
 	stop_ = false;

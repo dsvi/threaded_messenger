@@ -53,12 +53,13 @@ public:
 	/// blocks till able to get the message. if message is got, but one of it's gurads is dead, then returns.
 	/// this is thread safe as long as error_handler() is thread safe.
 	void run_one() noexcept;
-
 	/// runs loop over all the messages, untill stop() is called
 	void run() noexcept;
 	/// thread safe. does not block. all messages added before call to stop() will be processed by run().
 	/// queue can be rerun after stop.
 	void stop();
+
+	bool empty() noexcept;
 private:
 	std::deque<Message> msgs_;
 	std::mutex queue_mutex_;
