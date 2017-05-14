@@ -32,7 +32,7 @@ private:
 	struct Blocker{
 		std::mutex mtx;
 		std::condition_variable cv;
-		bool can_go = true;
+		unsigned int members_count{0};
 	};
 	std::shared_ptr<Blocker> pending_tasks_;
 };

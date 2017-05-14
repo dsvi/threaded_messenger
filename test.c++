@@ -1,4 +1,5 @@
 #include <thread>
+#include <atomic>
 #include "lest.hpp"
 #include "message_queue.h"
 #include "group.h"
@@ -10,7 +11,7 @@ const lest::test specification[] =
 {
   CASE( "Basic multithreaded test" )
   {
-    int count = 0;
+    atomic<int> count{0};
     Message_queue mq;
     const uint tries = 1000000;
     thread mqt(&Message_queue::run, &mq);
@@ -28,7 +29,7 @@ const lest::test specification[] =
 
   CASE( "Error reporting test" )
   {
-    int count = 0;
+    atomic<int> count{0};
     Message_queue mq;
     mq.error_handler([&](exception_ptr eptr){
       try {
@@ -51,7 +52,7 @@ const lest::test specification[] =
 
   CASE( "Guards test" )
   {
-    int count = 0;
+    atomic<int> count{0};
     Message_queue mq;
     thread t(&Message_queue::run, &mq);
     unique_ptr<Guard> gp(new Guard());
@@ -67,7 +68,7 @@ const lest::test specification[] =
   },
   CASE( "Group test" )
   {
-    int count = 0;
+    atomic<int> count{0};
     Message_queue mq;
     const uint tries = 1000000;
     vector<thread> threads;
@@ -99,5 +100,5 @@ const lest::test specification[] =
 
 int main( int argc, char * argv[] )
 {
-	return lest::run( specification, argc, argv );
+  return lest::run( specification, argc, argv );
 }

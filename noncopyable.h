@@ -1,18 +1,16 @@
-#ifndef NONCOPYABLE_H
-#define NONCOPYABLE_H
+#pragma once
 
 class noncopyable
 {
- protected:
-		noncopyable( noncopyable&& ) =default;
-		noncopyable& operator=(noncopyable&& ) =default;
+protected:
+	noncopyable( noncopyable&& ) noexcept =default;
+	noncopyable& operator=(noncopyable&& ) =default;
 
 
-		noncopyable() {}
-		~noncopyable() {}
- private:
-		noncopyable( const noncopyable& );
-		const noncopyable& operator=( const noncopyable& );
+	noncopyable() {}
+	~noncopyable() {}
+private:
+	noncopyable( const noncopyable& );
+	const noncopyable& operator=( const noncopyable& );
 };
 
-#endif // NONCOPYABLE_H
