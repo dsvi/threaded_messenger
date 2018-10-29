@@ -11,7 +11,7 @@ const lest::test specification[] =
 {
   CASE( "Basic multithreaded test" )
   {
-    atomic<int> count{0};
+   int count{0};
     Message_queue mq;
     const uint tries = 1000000;
     thread mqt(&Message_queue::run, &mq);
@@ -29,7 +29,7 @@ const lest::test specification[] =
 
   CASE( "Error reporting test" )
   {
-    atomic<int> count{0};
+    int count{0};
     Message_queue mq;
     mq.error_handler([&](exception_ptr eptr){
       try {
@@ -52,7 +52,7 @@ const lest::test specification[] =
 
   CASE( "Guards test" )
   {
-    atomic<int> count{0};
+    int count{0};
     Message_queue mq;
     thread t(&Message_queue::run, &mq);
     unique_ptr<Guard> gp(new Guard());
@@ -68,7 +68,7 @@ const lest::test specification[] =
   },
   CASE( "Group test" )
   {
-    atomic<int> count{0};
+    int count{0};
     Message_queue mq;
     const uint tries = 1000000;
     vector<thread> threads;

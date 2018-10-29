@@ -4,7 +4,8 @@ project "threaded_messenger"
   files {
      "*.h",
      "message_queue.c++",
-     "group.c++"
+     "group.c++",
+     "thread_pool.c++"
   }
   links {"pthread" }
   

@@ -31,6 +31,15 @@ void Message_queue::add(Msg_func &&f, std::initializer_list<Life_watcher> grds)
 	wake_up_.notify_one();
 }
 
+void Message_queue::add(Msg_func &&f, std::vector<Life_watcher> &&grds)
+{
+	  {
+		unique_lock<mutex> lock(queue_mutex_);
+		msgs_.emplace_back(move(f), move(grds));
+	  }
+	  wake_up_.notify_one();
+}
+
 void Message_queue::add_front(Msg_func &&msg)
 {
 	add_front(move(msg), initializer_list<Life_watcher>());
@@ -46,6 +55,15 @@ void Message_queue::add_front(Msg_func &&msg, std::initializer_list<Life_watcher
 	{
 		unique_lock<mutex> lock(queue_mutex_);
 		msgs_.emplace_front(move(msg), grds);
+	}
+	wake_up_.notify_one();
+}
+
+void Message_queue::add_front(Msg_func &&msg, std::vector<Life_watcher> &&grds)
+{
+	{
+		unique_lock<mutex> lock(queue_mutex_);
+		msgs_.emplace_front(move(msg), move(grds));
 	}
 	wake_up_.notify_one();
 }
